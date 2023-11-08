@@ -1,4 +1,4 @@
-menu "Example Configuration"
+menu "Wifi Station Funky Http Getter Thingy Config"
 
     config ESP_WIFI_SSID
         string "WiFi SSID"
@@ -11,6 +11,24 @@ menu "Example Configuration"
         default "mypassword"
         help
             WiFi password (WPA or WPA2) for the example to use.
+
+    config ESP_HTTP_WEB_SERVER
+        string "Web Server"
+        default "example.com"
+        help
+            What server to send GET Request to.
+
+    config ESP_HTTP_SERVER_PORT
+        string "Web Server Port"
+        default "80"
+        help
+            You know what a server port is...
+
+    config ESP_HTTP_SERVER_PATH
+        string "Web Server Path"
+        default "/"
+        help
+            Set a particular path to get.
 
     choice ESP_WIFI_SAE_MODE
         prompt "WPA3 SAE mode selection"

@@ -239,25 +239,8 @@ static void led_task(void *pvParameters){
     }
 }
 
-void app_main(void)
-{
-    configure_led();
+static void http_handler_task(void *pvParameters){
     TaskHandle_t xHandle = NULL;
-    TaskHandle_t xLedHandle = NULL;
-
-    /* Initialize NVS */
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-      ESP_ERROR_CHECK(nvs_flash_erase());
-      ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
-
-    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
-    wifi_init_sta();
-    xTaskCreate(&led_task, "led_task", 4096, NULL, 4, &xLedHandle);
-
-    /* The HTTP Request Logic */
     while(1) {
         if(!connected){
             http_request_finished = false;
@@ -274,4 +257,25 @@ void app_main(void)
         }
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+}
+
+void app_main(void)
+{
+    configure_led();
+    TaskHandle_t xLedHandler = NULL;
+    TaskHandle_t xHttpHandler = NULL;
+
+    /* Initialize NVS */
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+
+    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
+    wifi_init_sta();
+    xTaskCreate(&led_task, "led_task", 4096, NULL, 4, &xLedHandler);
+    xTaskCreate(&http_handler_task, "http_handler", 4096, NULL, 3, &xHttpHandler);
+    return;
 }
